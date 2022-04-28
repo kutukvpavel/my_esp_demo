@@ -33,8 +33,9 @@ enum
 
     ATTR_IDX_MEASURE_DECL,
     ATTR_IDX_MEASURE_VAL,
+    ATTR_IDX_MEASURE_CCC,
     ATTR_IDX_MEASURE_DESC,
-    ATTR_IDX_SVC_CCC_DESC,
+    ATTR_IDX_MEASURE_PRES,
 
     ATTR_TOTAL,
 };
@@ -152,6 +153,7 @@ static const uint8_t char_prop_read_notify = ESP_GATT_CHAR_PROP_BIT_READ | ESP_G
 static const uint16_t sensing_measure_uuid = 0x2BCF; //Ammonia
 static const uint16_t sensing_desc_uuid = ESP_GATT_UUID_ENV_SENSING_MEASUREMENT_DESCR;
 static const uint16_t sensing_ccc_desc_uuid = ESP_GATT_UUID_CHAR_CLIENT_CONFIG;
+static const uint16_t sensing_pres_uuid = ESP_GATT_UUID_CHAR_PRESENT_FORMAT;
 static uint8_t sensing_meas_attrs[11] = { 
     0x00, 0x00, //Flags, reserved
     0x02, //Sampling = mean
@@ -159,6 +161,14 @@ static uint8_t sensing_meas_attrs[11] = {
     0x00, 0x00, 0x01, //Update interval
     0x01, //Application = air
     0x02 //Uncertainty = 2x0.5%
+ };
+ #define MY_UNIT_UUID 0x271A //mol/m^3
+ static uint8_t sensing_pres_attr[] = {
+     0x14, //IEEE-754
+    0x00, //Exponent
+    _HB(MY_UNIT_UUID), _LB(MY_UNIT_UUID), //Unit UUID
+    0x01, //Description namespace (Bluetooth SIG)
+    0x00, 0x00 //Description index (??)
  };
 
 static uint8_t sensing_ccc[2] = { 0x00, 0x00 };
@@ -172,7 +182,7 @@ static esp_gatts_attr_db_t sensing_gatt_db[ATTR_TOTAL] =
                 ESP_UUID_LEN_16, 
                 (uint8_t *)&primary_service_uuid, 
                 ESP_GATT_PERM_READ, 
-                sizeof(uint16_t), 
+                sizeof(sensing_svc_uuid), 
                 sizeof(sensing_svc_uuid), 
                 (uint8_t *)&sensing_svc_uuid
                 }
@@ -216,7 +226,7 @@ static esp_gatts_attr_db_t sensing_gatt_db[ATTR_TOTAL] =
                 }
             },
 
-        [ATTR_IDX_SVC_CCC_DESC] =
+        [ATTR_IDX_MEASURE_CCC] =
             {{ESP_GATT_AUTO_RSP}, {
                 ESP_UUID_LEN_16,
                 (uint8_t *)&sensing_ccc_desc_uuid,
@@ -224,6 +234,17 @@ static esp_gatts_attr_db_t sensing_gatt_db[ATTR_TOTAL] =
                 sizeof(sensing_ccc),
                 sizeof(sensing_ccc),
                 sensing_ccc
+                }
+            },
+
+        [ATTR_IDX_MEASURE_PRES] = 
+            {{ESP_GATT_AUTO_RSP}, {
+                ESP_UUID_LEN_16,
+                (uint8_t *)&sensing_pres_uuid,
+                ESP_GATT_PERM_READ,
+                sizeof(sensing_pres_attr),
+                sizeof(sensing_pres_attr),
+                sensing_pres_attr
                 }
             }
     };
