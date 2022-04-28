@@ -3,8 +3,9 @@
 # project subdirectory.
 #
 
-PROJECT_NAME := sec_gatts_demo
+PROJECT_NAME := my_esp_demo
 
+EXTRA_COMPONENT_DIRS = $(IDF_PATH)/examples/common_components/led_strip
 COMPONENT_ADD_INCLUDEDIRS := components/include
 
 include $(IDF_PATH)/make/project.mk

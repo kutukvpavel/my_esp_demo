@@ -1,10 +1,5 @@
-/*
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
 #pragma once
 
-esp_err_t my_ble_init();
+esp_err_t my_ble_init(float* measurement_value);
+void my_ble_clear_persistent(void);
+void my_ble_notify_value_changed(void);
